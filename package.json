@@ -1,0 +1,22 @@
+{
+  "name": "site-sms-notify",
+  "version": "1.0.0",
+  "description": "Send SMS notifications on site change via SHA1 checksum",
+  "main": "app.js",
+  "scripts": {},
+  "author": "Joe McCann",
+  "license": "MIT",
+  "homepage": "https://github.com/joemccann/did-the-site-change",
+  "dependencies": {
+    "checksum": "^0.1.1",
+    "cron": "^1.1.0",
+    "dotenv": "^1.2.0",
+    "request": "^2.69.0",
+    "twilio": "^1.11.1",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=4.2.0"
+  }
+}
