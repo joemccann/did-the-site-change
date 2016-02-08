@@ -18,6 +18,7 @@ function siteWatcher(){
 
 			if(error)return console.error(error)
 			else checksumString = checksum(body)
+	    
 	    console.log(checksumString) // Show the checksum. 
 
 		}) // end request
@@ -30,9 +31,14 @@ function siteWatcher(){
 			if(error)return console.error(error)
 			// Do the comparison
 			else{
-				if(checksumString != checksum(body)){
+				var currentCheckSum = checksum(body)
+				if(checksumString != currentCheckSum){
 					// They are not the same so send notification 
 					console.log('Sites are not the same.')
+					
+					// Update checkSumString's value
+					checksumString = currentCheckSum
+
 					// Send the SMS to administrators
 					return twilio.sendSMSNotification(`The site, ${cfg.siteToMonitor}, has changed!`)
 				}
