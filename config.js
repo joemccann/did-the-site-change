@@ -3,6 +3,12 @@
 const dotenv = require('dotenv')
 let cfg = {}
 
+if(process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test'){
+	dotenv.config({path: '.env'})
+}else{
+  dotenv.config({path: '.env.test', silent: true})
+}
+
 cfg.accountSid = process.env.TWILIO_ACCOUNT_SID
 cfg.authToken = process.env.TWILIO_AUTH_TOKEN
 cfg.sendingNumber = process.env.TWILIO_NUMBER
