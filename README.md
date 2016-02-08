@@ -11,7 +11,7 @@ Install everything
 
 `npm install`
 
-Add your [Twilio](https://twilio.com] configuration details in `.env.RENAME_ME` and then rename it to `.env`
+Add your [Twilio](https://twilio.com) configuration details in `.env.RENAME_ME` and then rename it to `.env`
 
 `mv .env.RENAME_ME .env`
 
