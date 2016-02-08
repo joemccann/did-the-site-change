@@ -6,7 +6,7 @@ const request = require('request')
 	,	checksum = require('checksum')
 	, twilio = require('./twilio/twilio-notification')
 	, twilioMessages = {
-		"BAD_RESPONSE_CODE": `The site, ${cfg.siteToMonitor}, has an error code of ${cfg.siteToMonitor} and may have changed or is down.`,
+		"BAD_RESPONSE_CODE": `The site, ${cfg.siteToMonitor}, has an error code of {code} and may have changed or is down.`,
 		"SITE_HAS_CHANGED": `The site, ${cfg.siteToMonitor}, has changed!`
 	}
 
@@ -23,7 +23,7 @@ function siteWatcher(){
 			if(error){return console.error(error)}
 			else {
 				if(response.statusCode > 399){
-					return twilio.sendSMSNotification(twilioMessages.BAD_RESPONSE_CODE)
+					return twilio.sendSMSNotification(twilioMessages.BAD_RESPONSE_CODE.replace('{code}', response.statusCode))
 				}
 				else{
 					return checksumString = checksum(body) 
