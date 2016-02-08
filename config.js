@@ -14,11 +14,11 @@ cfg.authToken = process.env.TWILIO_AUTH_TOKEN
 cfg.sendingNumber = process.env.TWILIO_NUMBER
 cfg.siteToMonitor = process.env.SITE_TO_MONITOR
 
-var requiredConfig = [cfg.accountSid, cfg.authToken, cfg.sendingNumber]
+var requiredConfig = [cfg.accountSid, cfg.authToken, cfg.sendingNumber, cfg.siteToMonitor]
 var isConfigured = requiredConfig.every(function(configValue){return !!configValue})
 
 if (!isConfigured){
-	throw new Error("TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_NUMBER must be set.")
+	throw new Error("TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_NUMBER and SITE_TO_MONITOR must be set.")
 }
 
 module.exports = cfg
