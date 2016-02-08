@@ -23,11 +23,12 @@ function siteWatcher(){
 			if(error){return console.error(error)}
 			else {
 				if(response.statusCode > 399){
-				return twilio.sendSMSNotification(twilioMessages.BAD_RESPONSE_CODE)
+					return twilio.sendSMSNotification(twilioMessages.BAD_RESPONSE_CODE)
+				}
+				else{
+					return checksumString = checksum(body) 
+				} // end else
 			}
-			else{
-				return checksumString = checksum(body) 
-			} // end else
 
 		}) // end request
 
