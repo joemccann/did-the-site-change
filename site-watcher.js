@@ -5,6 +5,10 @@ const request = require('request')
 	,	cronJob = require('cron').CronJob
 	,	checksum = require('checksum')
 	, twilio = require('./twilio/twilio-notification')
+	, twilioMessages = {
+		"BAD_RESPONSE_CODE": `The site, ${cfg.siteToMonitor}, has an error code of ${cfg.siteToMonitor} and may have changed or is down.`,
+		"SITE_HAS_CHANGED": `The site, ${cfg.siteToMonitor}, has changed!`
+	}
 
 let checksumString = ''	
 
@@ -16,10 +20,14 @@ function siteWatcher(){
 		// Create the first checksum and return
 		return request(cfg.siteToMonitor, function initialRequestCallback(error, response, body){
 
-			if(error)return console.error(error)
-			else checksumString = checksum(body)
-	    
-	    console.log(checksumString) // Show the checksum. 
+			if(error){return console.error(error)}
+			else {
+				if(response.statusCode > 399){
+				return twilio.sendSMSNotification(twilioMessages.BAD_RESPONSE_CODE)
+			}
+			else{
+				return checksumString = checksum(body) 
+			} // end else
 
 		}) // end request
 
@@ -40,7 +48,7 @@ function siteWatcher(){
 					checksumString = currentCheckSum
 
 					// Send the SMS to administrators
-					return twilio.sendSMSNotification(`The site, ${cfg.siteToMonitor}, has changed!`)
+					return twilio.sendSMSNotification()
 				}
 	  	} // end else
 		}) // end request
@@ -57,7 +65,3 @@ var job = new cronJob('*/5 * * * * *', siteWatcher, function endCronJob(){
 );
 
 job.start()
-
-
-
-
