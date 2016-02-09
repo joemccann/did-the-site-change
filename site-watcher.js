@@ -19,7 +19,7 @@ function siteWatcher(){
 	if(!checksumString){
 		// Create the first checksum and return
 		return request(cfg.siteToMonitor, function initialRequestCallback(error, response, body){
-
+			// TODO: DO SOMETHING MEANINGFUL WITH THE ERROR
 			if(error){return console.error(error)}
 			else {
 				if(response.statusCode > 399){
@@ -28,8 +28,7 @@ function siteWatcher(){
 				else{
 					return checksumString = checksum(body) 
 				} // end else
-			}
-
+			} // end else
 		}) // end request
 
 	}
@@ -37,7 +36,8 @@ function siteWatcher(){
 		// Compare current checksum with latest request body 
 		return request(cfg.siteToMonitor, function recurringRequestCallback(error, response, body){
 
-			if(error)return console.error(error)
+			// TODO: DO SOMETHING MEANINGFUL WITH THE ERROR
+			if(error){return console.error(error)}
 			// Do the comparison
 			else{
 				var currentCheckSum = checksum(body)
@@ -49,7 +49,7 @@ function siteWatcher(){
 					checksumString = currentCheckSum
 
 					// Send the SMS to administrators
-					return twilio.sendSMSNotification()
+					return twilio.sendSMSNotification(twilioMessages.SITE_HAS_CHANGED)
 				}
 	  	} // end else
 		}) // end request
