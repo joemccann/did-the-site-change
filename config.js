@@ -9,11 +9,7 @@ const dotenv = require('dotenv')
 		, siteToMonitor: null
 	}
 
-if(process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test'){
-	dotenv.config({path: path.join(__dirname, '.env')})
-}else{
- 	dotenv.config({path: path.join(__dirname, '.env.test'), silent: true})
-}
+dotenv.config({path: path.join(__dirname, '.env')})
 
 cfg.accountSid = process.env.TWILIO_ACCOUNT_SID
 cfg.authToken = process.env.TWILIO_AUTH_TOKEN
