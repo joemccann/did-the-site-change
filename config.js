@@ -1,7 +1,12 @@
 "use strict"
 
 const dotenv = require('dotenv')
-let cfg = {}
+	, cfg = {
+			accountSid: null
+		,	authToken: null
+		, sendingNumber: null
+		, siteToMonitor: null
+	}
 
 if(process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test'){
 	dotenv.config({path: '.env'})
@@ -14,8 +19,8 @@ cfg.authToken = process.env.TWILIO_AUTH_TOKEN
 cfg.sendingNumber = process.env.TWILIO_NUMBER
 cfg.siteToMonitor = process.env.SITE_TO_MONITOR
 
-var requiredConfig = [cfg.accountSid, cfg.authToken, cfg.sendingNumber, cfg.siteToMonitor]
-var isConfigured = requiredConfig.every(function(configValue){return !!configValue})
+let requiredConfig = [cfg.accountSid, cfg.authToken, cfg.sendingNumber, cfg.siteToMonitor]
+let isConfigured = requiredConfig.every(function(configValue){return !!configValue})
 
 if (!isConfigured){
 	throw new Error("TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_NUMBER and SITE_TO_MONITOR must be set.")
