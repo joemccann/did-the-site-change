@@ -6,4 +6,10 @@ const twilioClient = require('./twilio-client')
 
 function formatMessage(message){return 'ALERT! ' + message}
 
-module.exports.sendSMSNotification = function(message){admins.forEach(function(admin){twilioClient.sendSMS(admin.phoneNumber, formatMessage(message))})}
+module.exports.sendSMSNotification = function(message){
+	admins.forEach(
+		function(admin){
+			twilioClient.sendSMS(admin.phoneNumber, formatMessage(message))}
+		)
+	}
+

@@ -5,64 +5,91 @@ const request = require('request')
 	,	cronJob = require('cron').CronJob
 	,	checksum = require('checksum')
 	, twilio = require('./twilio/twilio-notification')
-	, twilioMessages = {
-		"BAD_RESPONSE_CODE": `The site, ${cfg.siteToMonitor}, has an error code of {code} and may have changed or is down.`,
-		"SITE_HAS_CHANGED": `The site, ${cfg.siteToMonitor}, has changed!`
-	}
 
-let checksumString = ''	
+
+// Create data structure containing site objects to monitor
+let sites = []
+
+// Populate said data structure; we need an URL and a checksum
+cfg.sitesToMonitor.split(" ").forEach(function(element){
+	sites.push({url: element, checksum: ''})
+}) 
+
+// Cycle through all sites and watch them; called by Cron Job. 
+function batchWatch(){
+	sites.forEach(function(element){
+		siteWatcher(element)
+	})
+}
 
 // Watch the site for changes...
-function siteWatcher(){
+function siteWatcher(siteObject){
+
+	let twilioMessages = {
+		"BAD_RESPONSE_CODE": `The site, ${siteObject.url}, has an error code of {code} and may have changed or is down.`,
+		"SITE_HAS_CHANGED": `The site, ${siteObject.url}, has changed!`
+	}
 
 	// Check to see if there is a seed checksum
-	if(!checksumString){
+	if(!siteObject.checksumString){
+
 		// Create the first checksum and return
-		return request(cfg.siteToMonitor, function initialRequestCallback(error, response, body){
+		return request(siteObject.url, function initialRequestCallback(error, response, body){
+
 			// TODO: DO SOMETHING MEANINGFUL WITH THE ERROR
 			if(error){return console.error(error)}
 			else {
 				if(response.statusCode > 399){
-					return twilio.sendSMSNotification(twilioMessages.BAD_RESPONSE_CODE.replace('{code}', response.statusCode))
+					return twilio.sendSMSNotification(twilioMessages.BAD_RESPONSE_CODE
+												.replace('{code}', response.statusCode))
 				}
 				else{
-					return checksumString = checksum(body) 
+					console.log(`Seeding checksum for ${siteObject.url}.`)
+					return siteObject.checksumString = checksum(body) 
 				} // end else
+
 			} // end else
+
 		}) // end request
 
 	}
 	else{
 		// Compare current checksum with latest request body 
-		return request(cfg.siteToMonitor, function recurringRequestCallback(error, response, body){
+		return request(siteObject.url, function recurringRequestCallback(error, response, body){
 
 			// TODO: DO SOMETHING MEANINGFUL WITH THE ERROR
 			if(error){return console.error(error)}
 			// Do the comparison
 			else{
-				var currentCheckSum = checksum(body)
-				if(checksumString != currentCheckSum){
+				
+				let currentCheckSum = checksum(body)
+				
+				if(siteObject.checksumString != currentCheckSum){
 					// They are not the same so send notification 
-					console.log('Sites are not the same.')
+					console.log(`Site ${siteObject.url} is not the same.`)
 					
 					// Update checkSumString's value
-					checksumString = currentCheckSum
+					siteObject.checksumString = currentCheckSum
 
 					// Send the SMS to administrators
 					return twilio.sendSMSNotification(twilioMessages.SITE_HAS_CHANGED)
 				}
+				else console.log(`Site ${siteObject.url} is still the same.`)
 	  	} // end else
+		
 		}) // end request
+	
 	} // end else
 
 } // end siteWatcher
 
-// Start the job to check every 5 seconds
-var job = new cronJob('*/5 * * * * *', siteWatcher, function endCronJob(){
+// Start the job to check every 10 seconds
+var job = new cronJob('*/10 * * * * *', batchWatch, function endCronJob(){
     console.log('cronJob ended')
   },
   true, /* Start the job right now */
   'America/Los_Angeles' /* Time zone of this job. */
 );
+
 
 job.start()

@@ -15,7 +15,9 @@ Add your [Twilio](https://twilio.com) configuration details in `.env.RENAME_ME` 
 
 `mv .env.RENAME_ME .env`
 
-Next, run the Website Watcher script (need something like upstart or systemd to monitor it)
+In the `.env` file, add a single URL or multiple URLs, separated by a single space (space delimited) to the `SITES_TO_MONITOR` variable of the sites you want to watch for changes.
+
+Next, run the website watcher script (need something like upstart or systemd to monitor it)
 
 `node site-watcher`
 
